@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
     <Version>0.1.0</Version>
     <Authors>DC</Authors>
     <Company>ESFA</Company>
@@ -23,6 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DC-JobContextManager.Interface" Version="0.1.0-beta0001" />
     <PackageReference Include="ESFA.DC.Auditing.Interface" Version="0.1.0-beta0001" />
     <PackageReference Include="ESFA.DC.JobContext" Version="0.1.1-beta0001" />
     <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.1.0-beta0001" />
@@ -34,8 +36,10 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DC-JobContextManager.Interface\DC-JobContextManager.Interface.csproj" />
-  </ItemGroup>
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+    </ItemGroup>
+  </Target>
 
 </Project>
