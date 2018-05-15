@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+    <Version>0.1.0</Version>
+    <Authors>DC</Authors>
+    <Company>ESFA</Company>
+    <Description>Job Context Manage implementation</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/SkillsFundingAgency/DC-JobContextManager/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/SkillsFundingAgency/DC-JobContextManager</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SkillsFundingAgency/DC-JobContextManager</RepositoryUrl>
+    <PackageTags>ESFA DC Job Context</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>DC-JobContextManager.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>DC-JobContextManager.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DC-JobContextManager.Interface" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.Auditing.Interface" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.JobContext" Version="0.1.1-beta0001" />
+    <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.Logging" Version="0.1.1-beta0001" />
+    <PackageReference Include="ESFA.DC.Mapping.Interface" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.Queueing.Interface" Version="0.1.1-beta0001" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.1.274" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+    </ItemGroup>
+  </Target>
+
+</Project>
