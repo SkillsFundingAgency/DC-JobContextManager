@@ -24,8 +24,6 @@ namespace DC.JobContextManager
         private readonly Func<T, CancellationToken, Task<bool>> _callback;
 
         private readonly ILogger _logger;
-        private readonly IQueueConfiguration _subscriptionQueueConfiguration;
-        private readonly IQueueConfiguration _publishQueueConfiguration;
         private readonly IQueueSubscriptionService<JobContextMessage> _queueSubscriptionService;
 
         public JobContextManager(

@@ -13,13 +13,22 @@
     <RepositoryUrl>https://github.com/SkillsFundingAgency/DC-JobContextManager</RepositoryUrl>
     <PackageTags>ESFA DC Job Context</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CodeAnalysisRuleSet>DC-JobContextManager.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <CodeAnalysisRuleSet>DC-JobContextManager.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>DC-JobContextManager.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <CodeAnalysisRuleSet>DC-JobContextManager.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
