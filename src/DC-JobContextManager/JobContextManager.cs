@@ -12,7 +12,7 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 namespace DC.JobContextManager
 {
-    public sealed class JobContextManager<T> : IJobContextManager, ICommunicationListener
+    public sealed class JobContextManager<T> : IJobContextManager
         where T : new()
     {
         private readonly IQueuePublishService<JobContextMessage> _queuePublishService;
