@@ -83,7 +83,7 @@ namespace DC.JobContextManager
                 jobContextMessage = _mapper.MapFrom(obj);
                 await _auditor.AuditEndAsync(jobContextMessage);
                 jobContextMessage.TopicPointer++;
-                if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
+                if (jobContextMessage.TopicPointer > jobContextMessage.Topics.Count)
                 {
                     return true;
                 }
