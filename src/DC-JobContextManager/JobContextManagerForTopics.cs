@@ -88,7 +88,17 @@ namespace DC.JobContextManager
                     return true;
                 }
 
-                await _topicPublishService.PublishAsync(jobContextMessage);
+                // get the next subscriptionName
+                var subscriptionSqlFilterValue = jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionSqlFilterValue;
+                string nextTopicSubscriptionName = jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName;
+
+                // create properties for topic with sqlfilter
+                var topicProperties = new Dictionary<string, object>()
+                {
+                    { "To", subscriptionSqlFilterValue }
+                };
+
+                await _topicPublishService.PublishAsync(jobContextMessage, topicProperties, nextTopicSubscriptionName);
             }
             catch (Exception ex)
             {
