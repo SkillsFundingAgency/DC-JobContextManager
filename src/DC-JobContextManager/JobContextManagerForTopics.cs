@@ -101,7 +101,6 @@ namespace DC.JobContextManager
 
                 await _topicPublishService.PublishAsync(jobContextMessage, topicProperties, nextTopicSubscriptionName);
                 _logger.LogDebug("completed callback");
-
             }
             catch (Exception ex)
             {
