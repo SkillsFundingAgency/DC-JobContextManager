@@ -72,6 +72,7 @@ namespace DC.JobContextManager
         {
             try
             {
+                _logger.LogDebug("started callback");
                 await _auditor.AuditStartAsync(jobContextMessage);
                 T obj = _mapper.MapTo(jobContextMessage);
                 if (!await _callback.Invoke(obj, cancellationToken))
@@ -83,7 +84,7 @@ namespace DC.JobContextManager
                 jobContextMessage = _mapper.MapFrom(obj);
                 await _auditor.AuditEndAsync(jobContextMessage);
                 jobContextMessage.TopicPointer++;
-                if (jobContextMessage.TopicPointer > jobContextMessage.Topics.Count)
+                if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
                 {
                     return true;
                 }
@@ -99,6 +100,8 @@ namespace DC.JobContextManager
                 };
 
                 await _topicPublishService.PublishAsync(jobContextMessage, topicProperties, nextTopicSubscriptionName);
+                _logger.LogDebug("completed callback");
+
             }
             catch (Exception ex)
             {
