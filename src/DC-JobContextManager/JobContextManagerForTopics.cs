@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DC.JobContextManager.Interface;
@@ -9,41 +10,52 @@ using ESFA.DC.JobContext.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
-using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 namespace DC.JobContextManager
 {
-    public sealed class JobContextManager<T> : IJobContextManager
-        where T : new()
+    public sealed class JobContextManagerForTopics<T> : IJobContextManager
+        where T : class
     {
-        private readonly ITopicPublishService<JobContextMessage> _topicPublishService;
-
-        private readonly IAuditor _auditor;
-
-        private readonly IMapper<JobContextMessage, T> _mapper;
-
-        private readonly Func<T, CancellationToken, Task<bool>> _callback;
-
-        private readonly JobContextMapper _jobContextMapper;
-
-        private readonly ILogger _logger;
-        private readonly IQueueSubscriptionService<JobContextMessage> _queueSubscriptionService;
         private readonly ITopicSubscriptionService<JobContextMessage> _topicSubscriptionService;
+        private readonly ITopicPublishService<JobContextMessage> _topicPublishService;
+        private readonly IAuditor _auditor;
+        private readonly IMapper<JobContextMessage, T> _mapper;
+        private readonly Func<T, CancellationToken, Task<bool>> _callback;
+        private readonly ILogger _logger;
 
-        public JobContextManager(
-            IQueueSubscriptionService<JobContextMessage> queueSubscriptionService,
+        public JobContextManagerForTopics(
+            ITopicSubscriptionService<JobContextMessage> topicSubscriptionService,
             ITopicPublishService<JobContextMessage> topicPublishService,
             IAuditor auditor,
             IMapper<JobContextMessage, T> mapper,
             Func<T, CancellationToken, Task<bool>> callback,
             ILogger logger)
         {
+            _topicSubscriptionService = topicSubscriptionService;
             _topicPublishService = topicPublishService;
             _auditor = auditor;
             _mapper = mapper;
             _callback = callback;
             _logger = logger;
-            _queueSubscriptionService = queueSubscriptionService;
+        }
+
+        public Task<string> OpenAsync(CancellationToken cancellationToken)
+        {
+            _topicSubscriptionService.Subscribe(Callback);
+
+            return Task.FromResult("Something");
+        }
+
+        public async Task CloseAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInfo("Closed Async method invoked");
+            await _topicSubscriptionService.UnsubscribeAsync();
+        }
+
+        public void Abort()
+        {
+            _logger.LogInfo("Abort method invoked");
+            _topicSubscriptionService.UnsubscribeAsync();
         }
 
         public async Task FinishSuccessfully(IJobContextMessage jobContextMessage)
@@ -56,31 +68,11 @@ namespace DC.JobContextManager
             await _auditor.AuditJobFailAsync(jobContextMessage);
         }
 
-        public Task<string> OpenAsync(CancellationToken cancellationToken)
-        {
-            _queueSubscriptionService.Subscribe(Callback);
-
-            return Task.FromResult("Something");
-        }
-
-        public async Task CloseAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInfo("Closed Async method invoked");
-            await _queueSubscriptionService.UnsubscribeAsync();
-        }
-
-        public void Abort()
-        {
-            _logger.LogInfo("Abort method invoked");
-            _queueSubscriptionService.UnsubscribeAsync();
-        }
-
         private async Task<bool> Callback(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
         {
-            JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
-
             try
             {
+                _logger.LogDebug("started callback");
                 await _auditor.AuditStartAsync(jobContextMessage);
                 T obj = _mapper.MapTo(jobContextMessage);
                 if (!await _callback.Invoke(obj, cancellationToken))
@@ -91,7 +83,6 @@ namespace DC.JobContextManager
 
                 jobContextMessage = _mapper.MapFrom(obj);
                 await _auditor.AuditEndAsync(jobContextMessage);
-
                 jobContextMessage.TopicPointer++;
                 if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
                 {
@@ -109,10 +100,11 @@ namespace DC.JobContextManager
                 };
 
                 await _topicPublishService.PublishAsync(jobContextMessage, topicProperties, nextTopicSubscriptionName);
+                _logger.LogDebug("completed callback");
             }
             catch (Exception ex)
             {
-                _logger.LogError("Exception thrown in JobManager callback", ex);
+                _logger.LogError("Exception thrown in JobContextManagerForTopics callback", ex);
                 await _auditor.AuditJobFailAsync(jobContextMessage);
                 return false;
             }

@@ -10,6 +10,7 @@ To use the following dependencies are required:
 - IQueuePublishService\<JobContextMessage>
 - IAuditor
 - ILogger
+- Microsoft.ServiceFabric.Services
 
 You will also need your own implementation of the following func in your service and make it the entry point of any processing for the topic.
 ```
