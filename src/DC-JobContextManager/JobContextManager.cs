@@ -14,7 +14,7 @@ namespace DC.JobContextManager
     public sealed class JobContextManager<T> : IJobContextManager
         where T : new()
     {
-        private readonly IQueuePublishService<JobContextMessage> _queuePublishService;
+        private readonly IQueuePublishService<JobContextDto> _queuePublishService;
 
         private readonly IAuditor _auditor;
 
@@ -22,15 +22,18 @@ namespace DC.JobContextManager
 
         private readonly Func<T, CancellationToken, Task<bool>> _callback;
 
+        private readonly JobContextMapper _jobContextMapper;
+
         private readonly ILogger _logger;
 
-        public JobContextManager(IQueueSubscriptionService<JobContextMessage> queueSubscriptionService, IQueuePublishService<JobContextMessage> queuePublishService, IAuditor auditor, IMapper<JobContextMessage, T> mapper, Func<T, CancellationToken, Task<bool>> callback, ILogger logger)
+        public JobContextManager(IQueueSubscriptionService<JobContextDto> queueSubscriptionService, IQueuePublishService<JobContextDto> queuePublishService, IAuditor auditor, IMapper<JobContextMessage, T> mapper, Func<T, CancellationToken, Task<bool>> callback, ILogger logger)
         {
             _queuePublishService = queuePublishService;
             _auditor = auditor;
             _mapper = mapper;
             _callback = callback;
             _logger = logger;
+            _jobContextMapper = new JobContextMapper();
             queueSubscriptionService.Subscribe(Callback);
         }
 
@@ -44,8 +47,10 @@ namespace DC.JobContextManager
             await _auditor.AuditJobFailAsync(jobContextMessage);
         }
 
-        private async Task<bool> Callback(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
+        private async Task<bool> Callback(JobContextDto jobContextDto, CancellationToken cancellationToken)
         {
+            JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
+
             try
             {
                 await _auditor.AuditStartAsync(jobContextMessage);
@@ -64,7 +69,8 @@ namespace DC.JobContextManager
                     return true;
                 }
 
-                await _queuePublishService.PublishAsync(jobContextMessage);
+                jobContextDto = _jobContextMapper.MapFrom(jobContextMessage);
+                await _queuePublishService.PublishAsync(jobContextDto);
             }
             catch (Exception ex)
             {
