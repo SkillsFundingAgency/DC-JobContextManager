@@ -9,14 +9,13 @@ using ESFA.DC.JobContext.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
-using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 namespace DC.JobContextManager
 {
     public sealed class JobContextManager<T> : IJobContextManager
         where T : new()
     {
-        private readonly ITopicPublishService<JobContextMessage> _topicPublishService;
+        private readonly ITopicPublishService<JobContextDto> _topicPublishService;
 
         private readonly IAuditor _auditor;
 
@@ -27,12 +26,12 @@ namespace DC.JobContextManager
         private readonly JobContextMapper _jobContextMapper;
 
         private readonly ILogger _logger;
-        private readonly IQueueSubscriptionService<JobContextMessage> _queueSubscriptionService;
-        private readonly ITopicSubscriptionService<JobContextMessage> _topicSubscriptionService;
+
+        private readonly IQueueSubscriptionService<JobContextDto> _queueSubscriptionService;
 
         public JobContextManager(
-            IQueueSubscriptionService<JobContextMessage> queueSubscriptionService,
-            ITopicPublishService<JobContextMessage> topicPublishService,
+            IQueueSubscriptionService<JobContextDto> queueSubscriptionService,
+            ITopicPublishService<JobContextDto> topicPublishService,
             IAuditor auditor,
             IMapper<JobContextMessage, T> mapper,
             Func<T, CancellationToken, Task<bool>> callback,
@@ -44,6 +43,7 @@ namespace DC.JobContextManager
             _callback = callback;
             _logger = logger;
             _queueSubscriptionService = queueSubscriptionService;
+            _jobContextMapper = new JobContextMapper();
         }
 
         public async Task FinishSuccessfully(IJobContextMessage jobContextMessage)
@@ -75,7 +75,7 @@ namespace DC.JobContextManager
             _queueSubscriptionService.UnsubscribeAsync();
         }
 
-        private async Task<bool> Callback(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
+        private async Task<bool> Callback(JobContextDto jobContextDto, CancellationToken cancellationToken)
         {
             JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
 
@@ -108,7 +108,8 @@ namespace DC.JobContextManager
                     { "To", subscriptionSqlFilterValue }
                 };
 
-                await _topicPublishService.PublishAsync(jobContextMessage, topicProperties, nextTopicSubscriptionName);
+                jobContextDto = _jobContextMapper.MapFrom(jobContextMessage);
+                await _topicPublishService.PublishAsync(jobContextDto, topicProperties, nextTopicSubscriptionName);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DC.JobContextManager.Interface;
@@ -16,16 +15,23 @@ namespace DC.JobContextManager
     public sealed class JobContextManagerForTopics<T> : IJobContextManager
         where T : class
     {
-        private readonly ITopicSubscriptionService<JobContextMessage> _topicSubscriptionService;
-        private readonly ITopicPublishService<JobContextMessage> _topicPublishService;
+        private readonly ITopicSubscriptionService<JobContextDto> _topicSubscriptionService;
+
+        private readonly ITopicPublishService<JobContextDto> _topicPublishService;
+
         private readonly IAuditor _auditor;
+
         private readonly IMapper<JobContextMessage, T> _mapper;
+
         private readonly Func<T, CancellationToken, Task<bool>> _callback;
+
+        private readonly JobContextMapper _jobContextMapper;
+
         private readonly ILogger _logger;
 
         public JobContextManagerForTopics(
-            ITopicSubscriptionService<JobContextMessage> topicSubscriptionService,
-            ITopicPublishService<JobContextMessage> topicPublishService,
+            ITopicSubscriptionService<JobContextDto> topicSubscriptionService,
+            ITopicPublishService<JobContextDto> topicPublishService,
             IAuditor auditor,
             IMapper<JobContextMessage, T> mapper,
             Func<T, CancellationToken, Task<bool>> callback,
@@ -37,6 +43,7 @@ namespace DC.JobContextManager
             _mapper = mapper;
             _callback = callback;
             _logger = logger;
+            _jobContextMapper = new JobContextMapper();
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
@@ -68,8 +75,10 @@ namespace DC.JobContextManager
             await _auditor.AuditJobFailAsync(jobContextMessage);
         }
 
-        private async Task<bool> Callback(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
+        private async Task<bool> Callback(JobContextDto jobContextDto, CancellationToken cancellationToken)
         {
+            JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
+
             try
             {
                 _logger.LogDebug("started callback");
@@ -99,7 +108,8 @@ namespace DC.JobContextManager
                     { "To", subscriptionSqlFilterValue }
                 };
 
-                await _topicPublishService.PublishAsync(jobContextMessage, topicProperties, nextTopicSubscriptionName);
+                jobContextDto = _jobContextMapper.MapFrom(jobContextMessage);
+                await _topicPublishService.PublishAsync(jobContextDto, topicProperties, nextTopicSubscriptionName);
                 _logger.LogDebug("completed callback");
             }
             catch (Exception ex)
