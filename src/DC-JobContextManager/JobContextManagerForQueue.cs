@@ -12,13 +12,13 @@ using ESFA.DC.Queueing.Interface;
 
 namespace DC.JobContextManager
 {
-    public sealed class JobContextManagerForTopics<T> : JobContextManagerBase<T>, IJobContextManager
+    public sealed class JobContextManagerForQueue<T> : JobContextManagerBase<T>, IJobContextManager
         where T : class
     {
-        private readonly ITopicSubscriptionService<JobContextDto> _topicSubscriptionService;
+        private readonly IQueueSubscriptionService<JobContextDto> _queueSubscriptionService;
 
-        public JobContextManagerForTopics(
-            ITopicSubscriptionService<JobContextDto> topicSubscriptionService,
+        public JobContextManagerForQueue(
+            IQueueSubscriptionService<JobContextDto> queueSubscriptionService,
             ITopicPublishService<JobContextDto> topicPublishService,
             IAuditor auditor,
             IMapper<JobContextMessage, T> mapper,
@@ -27,7 +27,7 @@ namespace DC.JobContextManager
             Func<T, CancellationToken, Task<bool>> callback)
             : base(topicPublishService, auditor, mapper, jobStatus, logger, callback)
         {
-            _topicSubscriptionService = topicSubscriptionService;
+            _queueSubscriptionService = queueSubscriptionService;
         }
 
         public async Task FinishSuccessfully(IJobContextMessage jobContextMessage)
@@ -42,20 +42,20 @@ namespace DC.JobContextManager
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            _topicSubscriptionService.Subscribe(Callback);
+            _queueSubscriptionService.Subscribe(Callback);
             return Task.FromResult("EndPoint");
         }
 
         public async Task CloseAsync(CancellationToken cancellationToken)
         {
             _logger.LogInfo("Closed Async method invoked");
-            await _topicSubscriptionService.UnsubscribeAsync();
+            await _queueSubscriptionService.UnsubscribeAsync();
         }
 
         public void Abort()
         {
             _logger.LogInfo("Abort method invoked");
-            _topicSubscriptionService.UnsubscribeAsync();
+            _queueSubscriptionService.UnsubscribeAsync();
         }
     }
 }

@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.1.12-beta0001" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.1.274" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>All</PrivateAssets>
