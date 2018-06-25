@@ -55,7 +55,7 @@ namespace DC.JobContextManager
         public void Abort()
         {
             _logger.LogInfo("Abort method invoked");
-            _topicSubscriptionService.UnsubscribeAsync();
+            _topicSubscriptionService.UnsubscribeAsync().Wait();
         }
     }
 }
