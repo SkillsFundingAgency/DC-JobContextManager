@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Auditing.Interface;
@@ -71,14 +72,15 @@ namespace DC.JobContextManager
                 jobContextMessage.TopicPointer++;
                 if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
                 {
-                    int numLearners = -1;
-                    if (jobContextMessage.Topics.Count == 1 &&
-                        string.Equals(jobContextMessage.Topics[0].SubscriptionName, "validation", StringComparison.OrdinalIgnoreCase))
+                    if (jobContextMessage.Topics.Count == 2 &&
+                        jobContextMessage.Topics.Any(x => x.SubscriptionName.Equals("validation", StringComparison.OrdinalIgnoreCase)))
                     {
+                        int numLearners = -1;
                         numLearners = GetNumberOfLearners(jobContextMessage.JobId, jobContextMessage.KeyValuePairs);
+                        await _jobStatus.JobAwaitingActionAsync(jobContextMessage.JobId, numLearners);
                     }
 
-                    await _jobStatus.JobFinishedAsync(jobContextMessage.JobId, numLearners);
+                    await _jobStatus.JobFinishedAsync(jobContextMessage.JobId);
                     return new QueueCallbackResult(true, null);
                 }
 
