@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DC.JobContextManager.Interface;
 using ESFA.DC.Auditing.Interface;
 using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
+using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
@@ -12,7 +12,7 @@ using ESFA.DC.Queueing.Interface;
 
 namespace ESFA.DC.JobContextManager
 {
-    public sealed class JobContextManagerForTopics<T> : JobContextManagerBase<T>, IJobContextManager
+    public sealed class JobContextManagerForTopics<T> : JobContextManagerBase<T>, IJobContextManager<T>
         where T : class
     {
         private readonly ITopicSubscriptionService<JobContextDto> _topicSubscriptionService;
