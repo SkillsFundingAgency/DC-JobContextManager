@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DC-JobContextManager", "DC-JobContextManager\DC-JobContextManager.csproj", "{98957726-49D0-4D9E-BD4E-014A475EE9B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContextManager", "DC-JobContextManager\ESFA.DC.JobContextManager.csproj", "{98957726-49D0-4D9E-BD4E-014A475EE9B1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A45B200-83A9-4A44-A520-6AFD6949793F}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DC-JobContextManager.Interface", "DC-JobContextManager.Interface\DC-JobContextManager.Interface.csproj", "{08882088-31E4-4C5B-8E24-FA5052FB3DD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContextManager.Interface", "DC-JobContextManager.Interface\ESFA.DC.JobContextManager.Interface.csproj", "{08882088-31E4-4C5B-8E24-FA5052FB3DD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

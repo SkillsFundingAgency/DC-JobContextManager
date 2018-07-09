@@ -72,15 +72,18 @@ namespace DC.JobContextManager
                 jobContextMessage.TopicPointer++;
                 if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
                 {
-                    if (jobContextMessage.Topics.Count == 2 &&
-                        jobContextMessage.Topics.Any(x => x.SubscriptionName.Equals("validation", StringComparison.OrdinalIgnoreCase)))
+                    int numLearners = -1;
+                    numLearners = GetNumberOfLearners(jobContextMessage.JobId, jobContextMessage.KeyValuePairs);
+
+                    if (jobContextMessage.KeyValuePairs.ContainsKey(JobContextMessageKey.PauseWhenFinished))
                     {
-                        int numLearners = -1;
-                        numLearners = GetNumberOfLearners(jobContextMessage.JobId, jobContextMessage.KeyValuePairs);
                         await _jobStatus.JobAwaitingActionAsync(jobContextMessage.JobId, numLearners);
                     }
+                    else
+                    {
+                        await _jobStatus.JobFinishedAsync(jobContextMessage.JobId);
+                    }
 
-                    await _jobStatus.JobFinishedAsync(jobContextMessage.JobId);
                     return new QueueCallbackResult(true, null);
                 }
 
@@ -114,9 +117,17 @@ namespace DC.JobContextManager
             int ret = 0;
             try
             {
-                object valid = keyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount];
-                object invalid = keyValuePairs[JobContextMessageKey.InvalidLearnRefNumbersCount];
-                ret = (int)valid + (int)invalid;
+                if (keyValuePairs.ContainsKey(JobContextMessageKey.ValidLearnRefNumbersCount))
+                {
+                    ret = (int)keyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount];
+                }
+
+                if (keyValuePairs.ContainsKey(JobContextMessageKey.InvalidLearnRefNumbers))
+                {
+                    ret = ret + (int)keyValuePairs[JobContextMessageKey.InvalidLearnRefNumbers];
+                }
+
+                return ret == 0 ? -1 : ret;
             }
             catch (Exception ex)
             {
