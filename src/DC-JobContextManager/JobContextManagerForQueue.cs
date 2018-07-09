@@ -10,7 +10,7 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
 
-namespace DC.JobContextManager
+namespace ESFA.DC.JobContextManager
 {
     public sealed class JobContextManagerForQueue<T> : JobContextManagerBase<T>, IJobContextManager
         where T : class

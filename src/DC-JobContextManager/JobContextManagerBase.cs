@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Auditing.Interface;
@@ -11,7 +10,7 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
 
-namespace DC.JobContextManager
+namespace ESFA.DC.JobContextManager
 {
     public class JobContextManagerBase<T>
     {
@@ -49,10 +48,11 @@ namespace DC.JobContextManager
         protected async Task<IQueueCallbackResult> Callback(JobContextDto jobContextDto, IDictionary<string, object> messageProperties, CancellationToken cancellationToken)
         {
             JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
+            JobContextMessage jobContextMessageConst = _jobContextMapper.MapTo(jobContextDto);
 
             try
             {
-                await _auditor.AuditStartAsync(jobContextMessage);
+                await _auditor.AuditStartAsync(jobContextMessageConst);
                 if (jobContextMessage.TopicPointer == 0)
                 {
                     await _jobStatus.JobStartedAsync(jobContextMessage.JobId);
@@ -61,19 +61,18 @@ namespace DC.JobContextManager
                 T obj = _mapper.MapTo(jobContextMessage);
                 if (!await _callback.Invoke(obj, cancellationToken))
                 {
-                    await _auditor.AuditJobFailAsync(jobContextMessage);
+                    await _auditor.AuditJobFailAsync(jobContextMessageConst);
                     return new QueueCallbackResult(false, null);
                 }
 
                 jobContextMessage = _mapper.MapFrom(obj);
 
-                await _auditor.AuditEndAsync(jobContextMessage);
+                await _auditor.AuditEndAsync(jobContextMessageConst);
 
                 jobContextMessage.TopicPointer++;
                 if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
                 {
-                    int numLearners = -1;
-                    numLearners = GetNumberOfLearners(jobContextMessage.JobId, jobContextMessage.KeyValuePairs);
+                    int numLearners = GetNumberOfLearners(jobContextMessage.JobId, jobContextMessage.KeyValuePairs);
 
                     if (jobContextMessage.KeyValuePairs.ContainsKey(JobContextMessageKey.PauseWhenFinished))
                     {
@@ -87,16 +86,14 @@ namespace DC.JobContextManager
                     return new QueueCallbackResult(true, null);
                 }
 
-                // get the next subscriptionName
-                string subscriptionSqlFilterValue =
-                    jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionSqlFilterValue;
+                // get the next subscription name
                 string nextTopicSubscriptionName =
                     jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName;
 
                 // create properties for topic with sqlfilter
                 var topicProperties = new Dictionary<string, object>
                 {
-                    { "To", subscriptionSqlFilterValue }
+                    { "To", nextTopicSubscriptionName }
                 };
 
                 jobContextDto = _jobContextMapper.MapFrom(jobContextMessage);
@@ -107,7 +104,7 @@ namespace DC.JobContextManager
             catch (Exception ex)
             {
                 _logger.LogError("Exception thrown in JobContextManager callback", ex, new object[] { jobContextDto.JobId });
-                await _auditor.AuditJobFailAsync(jobContextMessage);
+                await _auditor.AuditJobFailAsync(jobContextMessageConst);
                 return new QueueCallbackResult(false, ex);
             }
         }
