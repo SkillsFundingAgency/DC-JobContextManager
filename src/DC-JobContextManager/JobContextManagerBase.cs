@@ -116,14 +116,15 @@ namespace ESFA.DC.JobContextManager
             {
                 if (keyValuePairs.ContainsKey(JobContextMessageKey.ValidLearnRefNumbersCount))
                 {
-                    ret = (int)keyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount];
+                    ret = Convert.ToInt32(keyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount]);
                 }
 
-                if (keyValuePairs.ContainsKey(JobContextMessageKey.InvalidLearnRefNumbers))
+                if (keyValuePairs.ContainsKey(JobContextMessageKey.InvalidLearnRefNumbersCount))
                 {
-                    ret = ret + (int)keyValuePairs[JobContextMessageKey.InvalidLearnRefNumbers];
+                    ret = ret + Convert.ToInt32(keyValuePairs[JobContextMessageKey.InvalidLearnRefNumbersCount]);
                 }
 
+                _logger.LogInfo($"Found {ret} total learners for job : {jobId}");
                 return ret == 0 ? -1 : ret;
             }
             catch (Exception ex)
