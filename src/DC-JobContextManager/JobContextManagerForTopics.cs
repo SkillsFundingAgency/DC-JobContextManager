@@ -30,30 +30,23 @@ namespace ESFA.DC.JobContextManager
             _topicSubscriptionService = topicSubscriptionService;
         }
 
-        public async Task FinishSuccessfully(IJobContextMessage jobContextMessage)
-        {
-            await _auditor.AuditEndAsync(jobContextMessage);
-        }
-
-        public async Task FinishError(IJobContextMessage jobContextMessage)
-        {
-            await _auditor.AuditJobFailAsync(jobContextMessage);
-        }
-
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            _topicSubscriptionService.Subscribe(Callback);
+            _topicSubscriptionService.Subscribe(Callback, cancellationToken);
+            // Todo: Remove the return type
             return Task.FromResult("EndPoint");
         }
 
         public async Task CloseAsync(CancellationToken cancellationToken)
         {
+            // Todo: Remove the cancellation token
             _logger.LogInfo("Closed Async method invoked");
             await _topicSubscriptionService.UnsubscribeAsync();
         }
 
         public void Abort()
         {
+            // Todo: Remove this method
             _logger.LogInfo("Abort method invoked");
             _topicSubscriptionService.UnsubscribeAsync().Wait();
         }

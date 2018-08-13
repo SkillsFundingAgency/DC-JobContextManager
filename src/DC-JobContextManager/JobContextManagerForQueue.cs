@@ -30,19 +30,9 @@ namespace ESFA.DC.JobContextManager
             _queueSubscriptionService = queueSubscriptionService;
         }
 
-        public async Task FinishSuccessfully(IJobContextMessage jobContextMessage)
-        {
-            await _auditor.AuditEndAsync(jobContextMessage);
-        }
-
-        public async Task FinishError(IJobContextMessage jobContextMessage)
-        {
-            await _auditor.AuditJobFailAsync(jobContextMessage);
-        }
-
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            _queueSubscriptionService.Subscribe(Callback);
+            _queueSubscriptionService.Subscribe(Callback, cancellationToken);
             return Task.FromResult("EndPoint");
         }
 
