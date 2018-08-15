@@ -109,7 +109,7 @@ namespace ESFA.DC.JobContextManager
             }
         }
 
-        private int GetNumberOfLearners(long jobId, IDictionary<JobContextMessageKey, object> keyValuePairs)
+        private int GetNumberOfLearners(long jobId, IDictionary<string, object> keyValuePairs)
         {
             int ret = 0;
             try
