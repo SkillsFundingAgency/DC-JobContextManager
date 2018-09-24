@@ -72,11 +72,9 @@ namespace ESFA.DC.JobContextManager
                 jobContextMessage.TopicPointer++;
                 if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
                 {
-                    int numLearners = GetNumberOfLearners(jobContextMessage.JobId, jobContextMessage.KeyValuePairs);
-
                     if (jobContextMessage.KeyValuePairs.ContainsKey(JobContextMessageKey.PauseWhenFinished))
                     {
-                        await _jobStatus.JobAwaitingActionAsync(jobContextMessage.JobId, numLearners);
+                        await _jobStatus.JobAwaitingActionAsync(jobContextMessage.JobId);
                     }
                     else
                     {
@@ -87,8 +85,7 @@ namespace ESFA.DC.JobContextManager
                 }
 
                 // get the next subscription name
-                string nextTopicSubscriptionName =
-                    jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName;
+                string nextTopicSubscriptionName = jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName;
 
                 // create properties for topic with sqlfilter
                 var topicProperties = new Dictionary<string, object>
@@ -107,32 +104,6 @@ namespace ESFA.DC.JobContextManager
                 await _auditor.AuditJobFailAsync(jobContextMessageConst);
                 return new QueueCallbackResult(false, ex);
             }
-        }
-
-        private int GetNumberOfLearners(long jobId, IDictionary<string, object> keyValuePairs)
-        {
-            int ret = 0;
-            try
-            {
-                if (keyValuePairs.ContainsKey(JobContextMessageKey.ValidLearnRefNumbersCount))
-                {
-                    ret = Convert.ToInt32(keyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount]);
-                }
-
-                if (keyValuePairs.ContainsKey(JobContextMessageKey.InvalidLearnRefNumbersCount))
-                {
-                    ret = ret + Convert.ToInt32(keyValuePairs[JobContextMessageKey.InvalidLearnRefNumbersCount]);
-                }
-
-                _logger.LogInfo($"Found {ret} total learners for job : {jobId}");
-                return ret == 0 ? -1 : ret;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Exception thrown in JobContextManager callback - GetNumberOfLearners", ex, new object[] { jobId });
-            }
-
-            return ret;
         }
     }
 }

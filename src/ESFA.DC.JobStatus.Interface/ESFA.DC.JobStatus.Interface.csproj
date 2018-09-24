@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Authors>DC</Authors>
+    <Company>ESFA</Company>
+    <Description>Interface for Job Status</Description>
+    <Copyright>Copyright (c) 2018</Copyright>
+    <PackageProjectUrl>https://github.com/SkillsFundingAgency/DC-JobStatus</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SkillsFundingAgency/DC-JobStatus</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/SkillsFundingAgency/DC-JobStatus/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageTags>ESFA DC Job Status Interface</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>ESFA.DC.JobStatus.Interface.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>ESFA.DC.JobStatus.Interface.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
+      <PrivateAssets>ALL</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
