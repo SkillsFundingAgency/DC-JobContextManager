@@ -88,11 +88,6 @@
         public const string FundingFm25Output = "FundingFm25Output";
 
         /// <summary>
-        /// The *Key* of the serialised and persisted funding FM36 Historic Earnings output. (string)
-        /// </summary>
-        public const string FundingFm36HistoricEarningsOutput = "FundingFm36HistoricEarningsOutput";
-
-        /// <summary>
         /// Flag to determine if the job will be finished (marked as completed) or go to Awaiting Action status (bool)
         /// </summary>
         public const string PauseWhenFinished = "PauseWhenFinished";

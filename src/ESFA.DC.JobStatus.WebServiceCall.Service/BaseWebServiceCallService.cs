@@ -30,11 +30,11 @@ namespace ESFA.DC.JobStatus.WebServiceCall.Service
             _endPointUrl = !_endPointUrl.EndsWith("/") ? $"{_endPointUrl}/Job/Status" : $"{_endPointUrl}Job/Status";
         }
 
-        protected async Task SendStatusAsync(long jobId, int status, CancellationToken cancellationToken, int numOfLearners = -1)
+        protected async Task SendStatusAsync(long jobId, int status, CancellationToken cancellationToken)
         {
             await client.PostAsync(
                 _endPointUrl,
-                new StringContent(_serializationService.Serialize(new JobStatusDto(jobId, status, numOfLearners)), Encoding.UTF8, "application/json"),
+                new StringContent(_serializationService.Serialize(new JobStatusDto(jobId, status)), Encoding.UTF8, "application/json"),
                 cancellationToken);
         }
     }

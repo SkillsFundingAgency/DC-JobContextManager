@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ESFA.DC.Auditing.Interface;
 using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
+using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
@@ -12,40 +13,49 @@ using ESFA.DC.Queueing.Interface;
 
 namespace ESFA.DC.JobContextManager
 {
-    public class JobContextManagerBase<T>
+    public class JobContextManager<T> : IJobContextManager<T>
+        where T : class
     {
-        protected readonly IAuditor _auditor;
-
-        protected readonly ILogger _logger;
-
-        private readonly Func<T, CancellationToken, Task<bool>> _callback;
-
+        private readonly ITopicSubscriptionService<JobContextDto> _topicSubscriptionService;
+        private readonly IAuditor _auditor;
+        private readonly ILogger _logger;
         private readonly ITopicPublishService<JobContextDto> _topicPublishService;
-
         private readonly IMapper<JobContextMessage, T> _mapper;
-
         private readonly IJobStatus _jobStatus;
-
         private readonly JobContextMapper _jobContextMapper;
+        private readonly IMessageHandler<T> _messageHandler;
 
-        protected JobContextManagerBase(
+        public JobContextManager(
+            ITopicSubscriptionService<JobContextDto> topicSubscriptionService,
             ITopicPublishService<JobContextDto> topicPublishService,
             IAuditor auditor,
             IMapper<JobContextMessage, T> mapper,
             IJobStatus jobStatus,
             ILogger logger,
-            Func<T, CancellationToken, Task<bool>> callback)
+            IMessageHandler<T> messageHandler)
         {
+            _topicSubscriptionService = topicSubscriptionService;
             _topicPublishService = topicPublishService;
             _auditor = auditor;
             _mapper = mapper;
             _jobStatus = jobStatus;
             _logger = logger;
-            _callback = callback;
-            _jobContextMapper = new JobContextMapper();
+            _messageHandler = messageHandler;
         }
 
-        protected async Task<IQueueCallbackResult> Callback(JobContextDto jobContextDto, IDictionary<string, object> messageProperties, CancellationToken cancellationToken)
+        public void OpenAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInfo("Opening Job Context Manager method invoked, Topic Subscription Subscribing");
+            _topicSubscriptionService.Subscribe(Callback, cancellationToken);
+        }
+
+        public async Task CloseAsync()
+        {
+            _logger.LogInfo("Closing Job Context Manager method invoked, Topic Subscription Unsubscribing");
+            await _topicSubscriptionService.UnsubscribeAsync();
+        }
+
+        private async Task<IQueueCallbackResult> Callback(JobContextDto jobContextDto, IDictionary<string, object> messageProperties, CancellationToken cancellationToken)
         {
             JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
             JobContextMessage jobContextMessageConst = _jobContextMapper.MapTo(jobContextDto);
@@ -59,7 +69,8 @@ namespace ESFA.DC.JobContextManager
                 }
 
                 T obj = _mapper.MapTo(jobContextMessage);
-                if (!await _callback.Invoke(obj, cancellationToken))
+
+                if (!await _messageHandler.HandleAsync(obj, cancellationToken))
                 {
                     await _auditor.AuditJobFailAsync(jobContextMessageConst);
                     return new QueueCallbackResult(false, null);

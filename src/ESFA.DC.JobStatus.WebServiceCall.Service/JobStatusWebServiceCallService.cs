@@ -33,7 +33,7 @@ namespace ESFA.DC.JobStatus.WebServiceCall.Service
         {
             try
             {
-                await SendStatusAsync(jobStatusDto.JobId, jobStatusDto.JobStatus, cancellationToken, jobStatusDto.NumberOfLearners);
+                await SendStatusAsync(jobStatusDto.JobId, jobStatusDto.JobStatus, cancellationToken);
                 return new QueueCallbackResult(true, null);
             }
             catch (Exception ex)
