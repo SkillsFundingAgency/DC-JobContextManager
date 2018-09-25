@@ -38,13 +38,17 @@
   <ItemGroup>
     <PackageReference Include="ESFA.DC.Auditing.Interface" Version="0.1.4-beta0001" />
     <PackageReference Include="ESFA.DC.JobContext" Version="0.1.15-beta0001" />
-    <PackageReference Include="ESFA.DC.JobStatus.Interface" Version="0.1.6-beta0001" />
+    <PackageReference Include="ESFA.DC.JobStatus.Interface" Version="0.1.12-beta0001" />
     <PackageReference Include="ESFA.DC.Logging" Version="0.1.1-beta0001" />
     <PackageReference Include="ESFA.DC.Mapping.Interface" Version="0.1.0-beta0001" />
     <PackageReference Include="ESFA.DC.Queueing.Interface" Version="0.1.12-beta0001" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.JobStatus.Dto\ESFA.DC.JobStatus.Dto.csproj" />
   </ItemGroup>
 
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">

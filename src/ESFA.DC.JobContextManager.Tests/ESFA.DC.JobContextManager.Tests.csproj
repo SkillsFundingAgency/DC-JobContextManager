@@ -52,6 +52,9 @@
     <Reference Include="ESFA.DC.Queueing.Interface, Version=0.1.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Queueing.Interface.0.1.14-beta0001\lib\netstandard2.0\ESFA.DC.Queueing.Interface.dll</HintPath>
     </Reference>
+    <Reference Include="FluentAssertions, Version=5.4.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.5.4.2\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
     <Reference Include="Moq, Version=4.10.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.10.0\lib\net45\Moq.dll</HintPath>
     </Reference>
@@ -124,6 +127,10 @@
     <ProjectReference Include="..\ESFA.DC.JobContext\ESFA.DC.JobContext.csproj">
       <Project>{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}</Project>
       <Name>ESFA.DC.JobContext</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ESFA.DC.JobStatus.Dto\ESFA.DC.JobStatus.Dto.csproj">
+      <Project>{325A7134-F54C-4E01-BACC-850E954CCFF6}</Project>
+      <Name>ESFA.DC.JobStatus.Dto</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.JobStatus.Interface\ESFA.DC.JobStatus.Interface.csproj">
       <Project>{D9FCEB99-019A-4C22-B5EB-D116242DC45D}</Project>

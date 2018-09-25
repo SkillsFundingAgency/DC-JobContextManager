@@ -6,6 +6,7 @@ using ESFA.DC.Auditing.Interface;
 using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
+using ESFA.DC.JobStatus.Dto;
 using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
@@ -21,7 +22,7 @@ namespace ESFA.DC.JobContextManager
         private readonly ILogger _logger;
         private readonly ITopicPublishService<JobContextDto> _topicPublishService;
         private readonly IMapper<JobContextMessage, T> _mapper;
-        private readonly IJobStatus _jobStatus;
+        private readonly IQueuePublishService<JobStatusDto> _jobStatusDtoQueuePublishService;
         private readonly JobContextMapper _jobContextMapper;
         private readonly IMessageHandler<T> _messageHandler;
 
@@ -30,7 +31,7 @@ namespace ESFA.DC.JobContextManager
             ITopicPublishService<JobContextDto> topicPublishService,
             IAuditor auditor,
             IMapper<JobContextMessage, T> mapper,
-            IJobStatus jobStatus,
+            IQueuePublishService<JobStatusDto> jobStatusDtoQueuePublishService,
             ILogger logger,
             IMessageHandler<T> messageHandler)
         {
@@ -38,7 +39,7 @@ namespace ESFA.DC.JobContextManager
             _topicPublishService = topicPublishService;
             _auditor = auditor;
             _mapper = mapper;
-            _jobStatus = jobStatus;
+            _jobStatusDtoQueuePublishService = jobStatusDtoQueuePublishService;
             _logger = logger;
             _messageHandler = messageHandler;
         }
@@ -55,6 +56,11 @@ namespace ESFA.DC.JobContextManager
             await _topicSubscriptionService.UnsubscribeAsync();
         }
 
+        public JobStatusDto BuildJobStatusDto(long jobId, JobStatusType jobStatusType)
+        {
+            return new JobStatusDto(jobId, (int)jobStatusType);
+        }
+
         private async Task<IQueueCallbackResult> Callback(JobContextDto jobContextDto, IDictionary<string, object> messageProperties, CancellationToken cancellationToken)
         {
             JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
@@ -65,7 +71,7 @@ namespace ESFA.DC.JobContextManager
                 await _auditor.AuditStartAsync(jobContextMessageConst);
                 if (jobContextMessage.TopicPointer == 0)
                 {
-                    await _jobStatus.JobStartedAsync(jobContextMessage.JobId);
+                    await _jobStatusDtoQueuePublishService.PublishAsync(BuildJobStatusDto(jobContextMessage.JobId, JobStatusType.Processing));
                 }
 
                 T obj = _mapper.MapTo(jobContextMessage);
@@ -85,11 +91,11 @@ namespace ESFA.DC.JobContextManager
                 {
                     if (jobContextMessage.KeyValuePairs.ContainsKey(JobContextMessageKey.PauseWhenFinished))
                     {
-                        await _jobStatus.JobAwaitingActionAsync(jobContextMessage.JobId);
+                        await _jobStatusDtoQueuePublishService.PublishAsync(BuildJobStatusDto(jobContextMessage.JobId, JobStatusType.Waiting));
                     }
                     else
                     {
-                        await _jobStatus.JobFinishedAsync(jobContextMessage.JobId);
+                        await _jobStatusDtoQueuePublishService.PublishAsync(BuildJobStatusDto(jobContextMessage.JobId, JobStatusType.Completed));
                     }
 
                     return new QueueCallbackResult(true, null);

@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.JobStatus.Interface
+﻿namespace ESFA.DC.JobStatus.WebServiceCall.Service.Interface
 {
     public interface IJobStatusWebServiceCallService<T>
     {

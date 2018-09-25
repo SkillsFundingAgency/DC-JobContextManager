@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -52,17 +54,37 @@ namespace ESFA.DC.JobContextManager.Tests
             topicSubscriptionServiceMock.Verify();
         }
 
+        [Theory]
+        [InlineData(1, JobStatusType.Ready)]
+        [InlineData(2, JobStatusType.MovedForProcessing)]
+        [InlineData(3, JobStatusType.Processing)]
+        [InlineData(4, JobStatusType.Completed)]
+        [InlineData(5, JobStatusType.FailedRetry)]
+        [InlineData(6, JobStatusType.Failed)]
+        [InlineData(7, JobStatusType.Paused)]
+        [InlineData(8, JobStatusType.Waiting)]
+        public void BuildJobStatusDto(int jobStatusTypeInteger, JobStatusType jobStatusType)
+        {
+            var jobId = 1;
+
+            var jobStatusDto = NewManager<string>().BuildJobStatusDto(jobId, jobStatusType);
+
+            jobStatusDto.JobId.Should().Be(jobId);
+            jobStatusDto.JobStatus.Should().Be(jobStatusTypeInteger);
+        }
+
         private JobContextManager<T> NewManager<T>(
             ITopicSubscriptionService<JobContextDto> topicSubscriptionService = null,
             ITopicPublishService<JobContextDto> topicPublishService = null,
             IAuditor auditor = null,
             IMapper<JobContextMessage, T> mapper = null,
-            IJobStatus jobStatus = null,
+            IQueuePublishService<JobStatusDto> jobStatusDtoQueuePublishService = null,
             ILogger logger = null,
             IMessageHandler<T> messageHandler = null)
             where T : class
         {
-            return new JobContextManager<T>(topicSubscriptionService, topicPublishService, auditor, mapper, jobStatus, logger, messageHandler);
+            // TODO : Fill in Job Status Dto Queue Publish Service after 
+            return new JobContextManager<T>(topicSubscriptionService, topicPublishService, auditor, mapper, null, logger, messageHandler);
         }
     }
 }
