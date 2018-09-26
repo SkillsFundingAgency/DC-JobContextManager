@@ -46,12 +46,15 @@ namespace ESFA.DC.JobContextManager.Tests
             var topicSubscriptionServiceMock = new Mock<ITopicSubscriptionService<JobContextDto>>();
 
             loggerMock.Setup(l => l.LogInfo("Closing Job Context Manager method invoked, Topic Subscription Unsubscribing", It.IsAny<object[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Verifiable();
-            topicSubscriptionServiceMock.Setup(s => s.UnsubscribeAsync()).Verifiable();
+            topicSubscriptionServiceMock.Setup(s => s.UnsubscribeAsync()).Returns(Task.CompletedTask).Verifiable();
 
-            NewManager<string>(topicSubscriptionService: topicSubscriptionServiceMock.Object, logger: loggerMock.Object).CloseAsync();
 
-            loggerMock.Verify();
-            topicSubscriptionServiceMock.Verify();
+            var manager = NewManager<string>(topicSubscriptionService: topicSubscriptionServiceMock.Object, logger: loggerMock.Object);
+
+            await manager.CloseAsync();
+
+            loggerMock.VerifyAll();
+            topicSubscriptionServiceMock.VerifyAll();
         }
 
         [Theory]

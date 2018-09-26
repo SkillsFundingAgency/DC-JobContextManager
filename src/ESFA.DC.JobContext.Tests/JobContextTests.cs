@@ -29,7 +29,6 @@ namespace ESFA.DC.JobContext.Tests
             {
                 new TopicItem(
                     "Subscription A",
-                    "SqlFilter A",
                     taskItems)
             };
 

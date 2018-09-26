@@ -18,13 +18,13 @@ namespace ESFA.DC.JobContextManager
         where T : class
     {
         private readonly ITopicSubscriptionService<JobContextDto> _topicSubscriptionService;
-        private readonly IAuditor _auditor;
-        private readonly ILogger _logger;
         private readonly ITopicPublishService<JobContextDto> _topicPublishService;
+        private readonly IAuditor _auditor;
         private readonly IMapper<JobContextMessage, T> _mapper;
         private readonly IQueuePublishService<JobStatusDto> _jobStatusDtoQueuePublishService;
-        private readonly JobContextMapper _jobContextMapper;
+        private readonly ILogger _logger;
         private readonly IMessageHandler<T> _messageHandler;
+        private readonly IMapper<JobContextDto, JobContextMessage> _jobContextMapper;
 
         public JobContextManager(
             ITopicSubscriptionService<JobContextDto> topicSubscriptionService,
@@ -42,6 +42,7 @@ namespace ESFA.DC.JobContextManager
             _jobStatusDtoQueuePublishService = jobStatusDtoQueuePublishService;
             _logger = logger;
             _messageHandler = messageHandler;
+            _jobContextMapper = new JobContextMapper();
         }
 
         public void OpenAsync(CancellationToken cancellationToken)
