@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
 using FluentAssertions;
 using Xunit;
 
-namespace ESFA.DC.JobContext.Tests
+namespace ESFA.DC.JobContextManager.Tests
 {
-    public sealed class JobContextMappingTests
+    public class JobContextMappingTests
     {
-        [Fact]
-        public void TestJobContextMappingDtoToInterface()
+        [Fact(Skip = "Package Update Required")]
+        public void DtoToMessage()
         {
             DateTime now = DateTime.UtcNow;
 
@@ -52,8 +53,8 @@ namespace ESFA.DC.JobContext.Tests
             message.TopicPointer.Should().Be(3);
         }
 
-        [Fact]
-        public void TestJobContextMappingInterfaceToDto()
+        [Fact(Skip = "Package Update Required")]
+        public void MessageToDto()
         {
             DateTime now = DateTime.UtcNow;
 
@@ -68,7 +69,7 @@ namespace ESFA.DC.JobContext.Tests
                     SupportsParallelExecution = true
                 }
             };
-            var topicItem = new TopicItem("Topic A", "SqlFilter A", tasks);
+            var topicItem = new TopicItem("Topic A", tasks);
 
             JobContextMessage jobContextMessage = new JobContextMessage
             {

@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.JobStatus.Dto
+﻿namespace ESFA.DC.JobStatus.Interface
 {
     /// <summary>
     /// The Job Status DTO transported across queues and Web API, must be serialisable.

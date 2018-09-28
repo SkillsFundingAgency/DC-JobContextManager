@@ -6,8 +6,6 @@ namespace ESFA.DC.JobContext.Interface
     {
         string SubscriptionName { get; }
 
-        string SubscriptionSqlFilterValue { get; }
-
         IReadOnlyList<ITaskItem> Tasks { get; }
     }
 }

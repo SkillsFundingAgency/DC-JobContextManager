@@ -6,6 +6,7 @@ using ESFA.DC.JobStatus.Dto;
 using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Serialization.Interfaces;
+using IJobStatusWebServiceCallServiceConfig = ESFA.DC.JobStatus.WebServiceCall.Service.Interface.IJobStatusWebServiceCallServiceConfig;
 
 namespace ESFA.DC.JobStatus.WebServiceCall.Service
 {
@@ -30,11 +31,11 @@ namespace ESFA.DC.JobStatus.WebServiceCall.Service
             _endPointUrl = !_endPointUrl.EndsWith("/") ? $"{_endPointUrl}/Job/Status" : $"{_endPointUrl}Job/Status";
         }
 
-        protected async Task SendStatusAsync(long jobId, int status, CancellationToken cancellationToken, int numOfLearners = -1)
+        protected async Task SendStatusAsync(long jobId, int status, CancellationToken cancellationToken)
         {
             await client.PostAsync(
                 _endPointUrl,
-                new StringContent(_serializationService.Serialize(new JobStatusDto(jobId, status, numOfLearners)), Encoding.UTF8, "application/json"),
+                new StringContent(_serializationService.Serialize(new JobStatusDto(jobId, status)), Encoding.UTF8, "application/json"),
                 cancellationToken);
         }
     }
