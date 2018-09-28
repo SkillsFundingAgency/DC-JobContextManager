@@ -79,15 +79,14 @@ namespace ESFA.DC.JobContextManager.Tests
         private JobContextManager<T> NewManager<T>(
             ITopicSubscriptionService<JobContextDto> topicSubscriptionService = null,
             ITopicPublishService<JobContextDto> topicPublishService = null,
-            IAuditor auditor = null,
             IMapper<JobContextMessage, T> mapper = null,
             IQueuePublishService<JobStatusDto> jobStatusDtoQueuePublishService = null,
+            IQueuePublishService<AuditingDto> auditingDtoQueuePublishService = null,
             ILogger logger = null,
             IMessageHandler<T> messageHandler = null)
             where T : class
         {
-            // TODO : Fill in Job Status Dto Queue Publish Service after 
-            return new JobContextManager<T>(topicSubscriptionService, topicPublishService, auditor, mapper, null, logger, messageHandler);
+            return new JobContextManager<T>(topicSubscriptionService, topicPublishService, mapper, jobStatusDtoQueuePublishService, auditingDtoQueuePublishService, logger, messageHandler);
         }
     }
 }

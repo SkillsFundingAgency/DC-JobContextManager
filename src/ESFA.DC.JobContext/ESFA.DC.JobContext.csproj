@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.1.16-beta0001" />
+    <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.2.0-beta0001" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

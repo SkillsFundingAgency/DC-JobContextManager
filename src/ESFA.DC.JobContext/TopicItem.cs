@@ -18,7 +18,5 @@ namespace ESFA.DC.JobContext
         public string SubscriptionName { get; set; }
 
         public IReadOnlyList<ITaskItem> Tasks { get; set; }
-
-        public string SubscriptionSqlFilterValue => throw new System.NotImplementedException();
     }
 }

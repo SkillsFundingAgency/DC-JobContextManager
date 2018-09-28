@@ -9,7 +9,7 @@ namespace ESFA.DC.JobContextManager.Tests
 {
     public class JobContextMappingTests
     {
-        [Fact(Skip = "Package Update Required")]
+        [Fact(Skip = "Nuget Update Required")]
         public void DtoToMessage()
         {
             DateTime now = DateTime.UtcNow;
@@ -43,8 +43,8 @@ namespace ESFA.DC.JobContextManager.Tests
                 }
             };
 
-            JobContextMapper mapper = new JobContextMapper();
-            JobContextMessage message = mapper.MapTo(jobContextDto);
+            var mapper = new JobContextMapper();
+            var message = mapper.MapTo(jobContextDto);
 
             message.SubmissionDateTimeUtc.Should().Be(now);
             message.JobId.Should().Be(12);
@@ -53,7 +53,7 @@ namespace ESFA.DC.JobContextManager.Tests
             message.TopicPointer.Should().Be(3);
         }
 
-        [Fact(Skip = "Package Update Required")]
+        [Fact]
         public void MessageToDto()
         {
             DateTime now = DateTime.UtcNow;

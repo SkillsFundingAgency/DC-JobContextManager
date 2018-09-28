@@ -9,7 +9,7 @@ namespace ESFA.DC.JobContext.Tests
 {
     public sealed class JobContextTests
     {
-        [Fact(Skip = "Pending Interface Nuget Package Update")]
+        [Fact]
         public void TestJobContextSerialise()
         {
             DateTime dateTime = DateTime.UtcNow;

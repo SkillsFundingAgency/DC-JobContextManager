@@ -21,7 +21,6 @@ namespace ESFA.DC.JobContextManager
                     new TopicItemDto()
                     {
                         SubscriptionName = topic.SubscriptionName,
-                        SubscriptionSqlFilterValue = topic.SubscriptionSqlFilterValue,
                         Tasks = topic.Tasks.Select(task =>
                             new TaskItemDto()
                             {
