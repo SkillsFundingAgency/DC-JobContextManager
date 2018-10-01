@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ESFA.DC.JobContext
+namespace ESFA.DC.JobContext.Interface
 {
     public sealed class JobContextDto
     {
-        public JobContextDto()
-        {
-        }
-
         public long JobId { get; set; }
 
         public DateTime SubmissionDateTimeUtc { get; set; }

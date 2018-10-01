@@ -106,9 +106,9 @@
       <Project>{E6EC1A52-2659-4BC0-BC3F-94C4E1370DB9}</Project>
       <Name>ESFA.DC.JobContext.Interface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.JobContext\ESFA.DC.JobContext.csproj">
-      <Project>{3AED0105-DDEB-4FE4-8F15-9F550387635A}</Project>
-      <Name>ESFA.DC.JobContext</Name>
+    <ProjectReference Include="..\ESFA.DC.JobContextManager\ESFA.DC.JobContextManager.csproj">
+      <Project>{F7FF1C7A-4D93-4370-9EBB-BEBE163400E5}</Project>
+      <Name>ESFA.DC.JobContextManager</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

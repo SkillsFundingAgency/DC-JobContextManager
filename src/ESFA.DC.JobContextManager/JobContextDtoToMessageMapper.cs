@@ -2,6 +2,9 @@
 using System.Linq;
 using ESFA.DC.JobContext;
 using ESFA.DC.Mapping.Interface;
+using JobContextMessage = ESFA.DC.JobContextManager.Model.JobContextMessage;
+using TaskItem = ESFA.DC.JobContextManager.Model.TaskItem;
+using TopicItem = ESFA.DC.JobContextManager.Model.TopicItem;
 
 namespace ESFA.DC.JobContextManager
 {
@@ -38,15 +41,16 @@ namespace ESFA.DC.JobContextManager
                 SubmissionDateTimeUtc = value.SubmissionDateTimeUtc,
                 KeyValuePairs = value.KeyValuePairs,
                 Topics = value.Topics.Select(topic =>
-                    new TopicItem(
-                        topic.SubscriptionName,
-                        topic.SubscriptionSqlFilterValue,
-                        topic.Tasks.Select(task =>
+                    new TopicItem()
+                    {
+                        SubscriptionName = topic.SubscriptionName,
+                        Tasks = topic.Tasks.Select(task =>
                             new TaskItem()
                             {
                                 SupportsParallelExecution = task.SupportsParallelExecution,
                                 Tasks = task.Tasks.ToList()
-                            }).ToList())).ToList()
+                            }).ToList()
+                    }).ToList()
             };
         }
     }

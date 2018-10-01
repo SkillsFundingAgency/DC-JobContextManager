@@ -10,6 +10,7 @@ using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
+using JobContextMessage = ESFA.DC.JobContextManager.Model.JobContextMessage;
 
 namespace ESFA.DC.JobContextManager
 {

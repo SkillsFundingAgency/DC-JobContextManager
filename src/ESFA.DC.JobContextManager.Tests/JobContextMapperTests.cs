@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.JobContext;
-using ESFA.DC.JobContext.Interface;
+using ESFA.DC.JobContextManager.Model;
+using ESFA.DC.JobContextManager.Model.Interface;
 using FluentAssertions;
 using Xunit;
 
@@ -9,12 +10,12 @@ namespace ESFA.DC.JobContextManager.Tests
 {
     public class JobContextMappingTests
     {
-        [Fact(Skip = "Nuget Update Required")]
+        [Fact]
         public void DtoToMessage()
         {
             DateTime now = DateTime.UtcNow;
 
-            JobContextDto jobContextDto = new JobContextDto
+            var jobContextDto = new JobContextDto
             {
                 SubmissionDateTimeUtc = now,
                 JobId = 12,

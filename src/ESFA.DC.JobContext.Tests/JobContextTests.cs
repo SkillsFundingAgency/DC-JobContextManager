@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.JobContext.Interface;
+using ESFA.DC.JobContextManager.Model;
+using ESFA.DC.JobContextManager.Model.Interface;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
@@ -10,44 +12,51 @@ namespace ESFA.DC.JobContext.Tests
     public sealed class JobContextTests
     {
         [Fact]
-        public void TestJobContextSerialise()
+        public void TestJobContextDtoSerialise()
         {
             DateTime dateTime = DateTime.UtcNow;
 
-            var taskItems = new List<ITaskItem>
+            var jobContextMessage = new JobContextDto()
             {
-                new TaskItem(
-                    new List<string>
+                JobId = 9999,
+                SubmissionDateTimeUtc = dateTime,
+                TopicPointer = 12,
+                KeyValuePairs = new Dictionary<string, object>()
+                {
+                    { "UkPrn", "UkPrn" },
+                    { "Container", "Container" },
+                    { "Filename", "Filename" },
+                    { "Username", "Username" }
+                },
+                Topics = new List<TopicItemDto>
+                {
+                    new TopicItemDto()
                     {
-                        "Task 1",
-                        "Task 2"
-                    },
-                    true)
+                        SubscriptionName = "Subscription A",
+                        Tasks = new List<TaskItemDto>
+                        {
+                            new TaskItemDto()
+                            {
+                                SupportsParallelExecution = true,
+                                Tasks = new List<string>
+                                {
+                                    "Task 1",
+                                    "Task 2"
+                                }
+                            }
+                        }
+                    }
+                }
             };
 
-            IReadOnlyList<ITopicItem> topics = new List<ITopicItem>
-            {
-                new TopicItem(
-                    "Subscription A",
-                    taskItems)
-            };
+            var serialised = JsonConvert.SerializeObject(jobContextMessage);
 
-            var jobContextMessage = new JobContextMessage(
-                9999, topics, "UkPrn", "Container", "Filename", "Username", 12, dateTime);
-
-            var settings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto
-            };
-
-            var serialised = JsonConvert.SerializeObject(jobContextMessage, settings);
-
-            var deserialised = JsonConvert.DeserializeObject<JobContextMessage>(serialised, settings);
+            var deserialised = JsonConvert.DeserializeObject<JobContextDto>(serialised);
 
             deserialised.JobId.Should().Be(9999);
             deserialised.SubmissionDateTimeUtc.Should().Be(dateTime);
             deserialised.TopicPointer.Should().Be(12);
-            deserialised.Topics.Should().BeEquivalentTo(topics);
+            deserialised.Topics.Should().BeEquivalentTo(deserialised.Topics);
             deserialised.KeyValuePairs.Should().ContainKey(JobContextMessageKey.UkPrn);
             deserialised.KeyValuePairs[JobContextMessageKey.UkPrn].Should().Be("UkPrn");
             deserialised.KeyValuePairs.Should().ContainKey(JobContextMessageKey.Filename);

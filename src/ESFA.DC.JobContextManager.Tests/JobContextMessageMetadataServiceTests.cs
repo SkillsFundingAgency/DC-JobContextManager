@@ -2,6 +2,8 @@
 using ESFA.DC.Auditing.Interface;
 using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
+using ESFA.DC.JobContextManager.Model;
+using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.JobStatus.Interface;
 using FluentAssertions;
 using Xunit;

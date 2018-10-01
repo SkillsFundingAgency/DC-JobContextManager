@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.JobContext.Interface;
+using IJobContextMessage = ESFA.DC.JobContextManager.Model.Interface.IJobContextMessage;
+using ITopicItem = ESFA.DC.JobContextManager.Model.Interface.ITopicItem;
 
-namespace ESFA.DC.JobContext
+namespace ESFA.DC.JobContextManager.Model
 {
     /// <summary>
     /// Job Context Message for use on Azure Service Bus. Must be serialisable.

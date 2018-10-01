@@ -12,8 +12,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContextManager",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContext.Interface", "ESFA.DC.JobContext.Interface\ESFA.DC.JobContext.Interface.csproj", "{E6EC1A52-2659-4BC0-BC3F-94C4E1370DB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContext", "ESFA.DC.JobContext\ESFA.DC.JobContext.csproj", "{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.JobContext.Tests", "ESFA.DC.JobContext.Tests\ESFA.DC.JobContext.Tests.csproj", "{7AA90609-1AD4-4BD2-8956-C50B9A800765}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobStatus.Interface", "ESFA.DC.JobStatus.Interface\ESFA.DC.JobStatus.Interface.csproj", "{D9FCEB99-019A-4C22-B5EB-D116242DC45D}"
@@ -21,6 +19,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobStatus.WebServiceCall.Service", "ESFA.DC.JobStatus.WebServiceCall.Service\ESFA.DC.JobStatus.WebServiceCall.Service.csproj", "{03D4449D-5CBB-485A-A045-6E6B9BD1B477}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.JobContextManager.Tests", "ESFA.DC.JobContextManager.Tests\ESFA.DC.JobContextManager.Tests.csproj", "{2B373952-8661-432F-9411-2DF0A580CA34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContext", "ESFA.DC.JobContext\ESFA.DC.JobContext.csproj", "{06F7C382-3842-4773-9E05-B354DDBD2339}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,14 +46,6 @@ Global
 		{E6EC1A52-2659-4BC0-BC3F-94C4E1370DB9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6EC1A52-2659-4BC0-BC3F-94C4E1370DB9}.Release|x64.ActiveCfg = Release|Any CPU
 		{E6EC1A52-2659-4BC0-BC3F-94C4E1370DB9}.Release|x64.Build.0 = Release|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Debug|x64.Build.0 = Debug|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Release|x64.ActiveCfg = Release|Any CPU
-		{D07D25C0-18D2-4B98-8F90-494FF3EF9A8C}.Release|x64.Build.0 = Release|Any CPU
 		{7AA90609-1AD4-4BD2-8956-C50B9A800765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7AA90609-1AD4-4BD2-8956-C50B9A800765}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AA90609-1AD4-4BD2-8956-C50B9A800765}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -86,6 +78,14 @@ Global
 		{2B373952-8661-432F-9411-2DF0A580CA34}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B373952-8661-432F-9411-2DF0A580CA34}.Release|x64.ActiveCfg = Release|Any CPU
 		{2B373952-8661-432F-9411-2DF0A580CA34}.Release|x64.Build.0 = Release|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|x64.Build.0 = Debug|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|x64.ActiveCfg = Release|Any CPU
+		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

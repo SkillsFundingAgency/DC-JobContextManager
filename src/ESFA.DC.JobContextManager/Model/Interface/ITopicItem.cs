@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ESFA.DC.JobContext.Interface
+namespace ESFA.DC.JobContextManager.Model.Interface
 {
     public interface ITopicItem
     {

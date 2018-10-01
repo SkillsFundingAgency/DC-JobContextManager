@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.JobContext.Interface;
+using ITaskItem = ESFA.DC.JobContextManager.Model.Interface.ITaskItem;
+using ITopicItem = ESFA.DC.JobContextManager.Model.Interface.ITopicItem;
 
-namespace ESFA.DC.JobContext
+namespace ESFA.DC.JobContextManager.Model
 {
     public sealed class TopicItem : ITopicItem
     {
@@ -16,6 +18,8 @@ namespace ESFA.DC.JobContext
         }
 
         public string SubscriptionName { get; set; }
+
+        public string SubscriptionSqlFilterValue { get; set; }
 
         public IReadOnlyList<ITaskItem> Tasks { get; set; }
     }

@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.Auditing.Interface;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobStatus.Interface;
+using IJobContextMessage = ESFA.DC.JobContextManager.Model.Interface.IJobContextMessage;
 
 namespace ESFA.DC.JobContextManager.Interface
 {
