@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Auditing.Interface;
 using ESFA.DC.JobContext;
+using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobStatus.Interface;

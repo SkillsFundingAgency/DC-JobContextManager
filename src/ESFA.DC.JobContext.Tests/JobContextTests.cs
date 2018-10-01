@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.JobContext.Interface;
-using ESFA.DC.JobContextManager.Model;
-using ESFA.DC.JobContextManager.Model.Interface;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;

@@ -129,10 +129,6 @@
       <Project>{f7ff1c7a-4d93-4370-9ebb-bebe163400e5}</Project>
       <Name>ESFA.DC.JobContextManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.JobContext\ESFA.DC.JobContext.csproj">
-      <Project>{06f7c382-3842-4773-9e05-b354ddbd2339}</Project>
-      <Name>ESFA.DC.JobContext</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.JobStatus.Interface\ESFA.DC.JobStatus.Interface.csproj">
       <Project>{D9FCEB99-019A-4C22-B5EB-D116242DC45D}</Project>
       <Name>ESFA.DC.JobStatus.Interface</Name>

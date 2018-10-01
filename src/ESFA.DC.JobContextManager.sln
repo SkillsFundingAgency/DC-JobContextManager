@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobStatus.WebServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.JobContextManager.Tests", "ESFA.DC.JobContextManager.Tests\ESFA.DC.JobContextManager.Tests.csproj", "{2B373952-8661-432F-9411-2DF0A580CA34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.JobContext", "ESFA.DC.JobContext\ESFA.DC.JobContext.csproj", "{06F7C382-3842-4773-9E05-B354DDBD2339}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,14 +76,6 @@ Global
 		{2B373952-8661-432F-9411-2DF0A580CA34}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B373952-8661-432F-9411-2DF0A580CA34}.Release|x64.ActiveCfg = Release|Any CPU
 		{2B373952-8661-432F-9411-2DF0A580CA34}.Release|x64.Build.0 = Release|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Debug|x64.Build.0 = Debug|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|x64.ActiveCfg = Release|Any CPU
-		{06F7C382-3842-4773-9E05-B354DDBD2339}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

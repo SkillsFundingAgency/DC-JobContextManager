@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using ESFA.DC.JobContext.Interface;
-using ITaskItem = ESFA.DC.JobContextManager.Model.Interface.ITaskItem;
-using ITopicItem = ESFA.DC.JobContextManager.Model.Interface.ITopicItem;
+using ESFA.DC.JobContextManager.Model.Interface;
 
 namespace ESFA.DC.JobContextManager.Model
 {

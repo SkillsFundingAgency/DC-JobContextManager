@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.JobContext;
+using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobStatus.Interface;
+using ESFA.DC.JobStatus.WebServiceCall.Service.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Queueing.Interface;
 using ESFA.DC.Serialization.Interfaces;
-using IJobStatusWebServiceCallServiceConfig = ESFA.DC.JobStatus.WebServiceCall.Service.Interface.IJobStatusWebServiceCallServiceConfig;
 
 namespace ESFA.DC.JobStatus.WebServiceCall.Service
 {

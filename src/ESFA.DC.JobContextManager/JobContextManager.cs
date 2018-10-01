@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Auditing.Interface;
-using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
+using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
-using JobContextMessage = ESFA.DC.JobContextManager.Model.JobContextMessage;
 
 namespace ESFA.DC.JobContextManager
 {

@@ -1,6 +1,5 @@
-﻿using ESFA.DC.JobContext;
+﻿using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.Mapping.Interface;
-using JobContextMessage = ESFA.DC.JobContextManager.Model.JobContextMessage;
 
 namespace ESFA.DC.JobContextManager
 {

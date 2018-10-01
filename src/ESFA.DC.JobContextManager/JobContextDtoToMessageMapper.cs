@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ESFA.DC.JobContext;
+using ESFA.DC.JobContext.Interface;
+using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.Mapping.Interface;
-using JobContextMessage = ESFA.DC.JobContextManager.Model.JobContextMessage;
-using TaskItem = ESFA.DC.JobContextManager.Model.TaskItem;
-using TopicItem = ESFA.DC.JobContextManager.Model.TopicItem;
 
 namespace ESFA.DC.JobContextManager
 {
