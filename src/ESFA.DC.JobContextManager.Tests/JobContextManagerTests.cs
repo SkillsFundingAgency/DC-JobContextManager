@@ -57,25 +57,6 @@ namespace ESFA.DC.JobContextManager.Tests
             topicSubscriptionServiceMock.VerifyAll();
         }
 
-        [Theory]
-        [InlineData(1, JobStatusType.Ready)]
-        [InlineData(2, JobStatusType.MovedForProcessing)]
-        [InlineData(3, JobStatusType.Processing)]
-        [InlineData(4, JobStatusType.Completed)]
-        [InlineData(5, JobStatusType.FailedRetry)]
-        [InlineData(6, JobStatusType.Failed)]
-        [InlineData(7, JobStatusType.Paused)]
-        [InlineData(8, JobStatusType.Waiting)]
-        public void BuildJobStatusDto(int jobStatusTypeInteger, JobStatusType jobStatusType)
-        {
-            var jobId = 1;
-
-            var jobStatusDto = NewManager<string>().BuildJobStatusDto(jobId, jobStatusType);
-
-            jobStatusDto.JobId.Should().Be(jobId);
-            jobStatusDto.JobStatus.Should().Be(jobStatusTypeInteger);
-        }
-
         private JobContextManager<T> NewManager<T>(
             ITopicSubscriptionService<JobContextDto> topicSubscriptionService = null,
             ITopicPublishService<JobContextDto> topicPublishService = null,

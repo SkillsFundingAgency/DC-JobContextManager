@@ -7,7 +7,7 @@ namespace ESFA.DC.JobContext
     /// <summary>
     /// Job Context Message for use on Azure Service Bus. Must be serialisable.
     /// </summary>
-    public sealed class JobContextMessage : IJobContextMessage
+    public class JobContextMessage : IJobContextMessage
     {
         public JobContextMessage()
         {

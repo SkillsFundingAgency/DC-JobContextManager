@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="JobContextManagerTests.cs" />
     <Compile Include="JobContextMapperTests.cs" />
+    <Compile Include="JobContextMessageMetadataServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

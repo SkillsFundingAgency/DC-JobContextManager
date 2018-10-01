@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DC.JobContext;
-using ESFA.DC.JobContext.Interface;
 using ESFA.DC.Mapping.Interface;
 
 namespace ESFA.DC.JobContextManager
 {
-    public sealed class JobContextMapper : IMapper<JobContextDto, JobContextMessage>
+    public sealed class JobContextDtoToMessageMapper : IMapper<JobContextDto, JobContextMessage>
     {
         public JobContextDto MapFrom(JobContextMessage value)
         {

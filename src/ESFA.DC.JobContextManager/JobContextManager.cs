@@ -23,7 +23,8 @@ namespace ESFA.DC.JobContextManager
         private readonly IQueuePublishService<AuditingDto> _auditingDtoQueuePublishService;
         private readonly ILogger _logger;
         private readonly IMessageHandler<T> _messageHandler;
-        private readonly IMapper<JobContextDto, JobContextMessage> _jobContextMapper;
+        private readonly IMapper<JobContextDto, JobContextMessage> _jobContextDtoToMessageMapper;
+        private readonly IJobContextMessageMetadataService _jobContextMessageMetadataService;
 
         public JobContextManager(
             ITopicSubscriptionService<JobContextDto> topicSubscriptionService,
@@ -33,6 +34,29 @@ namespace ESFA.DC.JobContextManager
             IQueuePublishService<AuditingDto> auditingDtoQueuePublishService,
             ILogger logger,
             IMessageHandler<T> messageHandler)
+            : this (
+                topicSubscriptionService,
+                topicPublishService,
+                mapper,
+                jobStatusDtoQueuePublishService,
+                auditingDtoQueuePublishService,
+                logger,
+                messageHandler,
+                new JobContextDtoToMessageMapper(),
+                new JobContextMessageMetadataService())
+        {
+        }
+
+        public JobContextManager(
+            ITopicSubscriptionService<JobContextDto> topicSubscriptionService,
+            ITopicPublishService<JobContextDto> topicPublishService,
+            IMapper<JobContextMessage, T> mapper,
+            IQueuePublishService<JobStatusDto> jobStatusDtoQueuePublishService,
+            IQueuePublishService<AuditingDto> auditingDtoQueuePublishService,
+            ILogger logger,
+            IMessageHandler<T> messageHandler,
+            IMapper<JobContextDto, JobContextMessage> jobContextDtoToMessageMapper,
+            IJobContextMessageMetadataService jobContextMessageMetadataService)
         {
             _topicSubscriptionService = topicSubscriptionService;
             _topicPublishService = topicPublishService;
@@ -41,7 +65,8 @@ namespace ESFA.DC.JobContextManager
             _auditingDtoQueuePublishService = auditingDtoQueuePublishService;
             _logger = logger;
             _messageHandler = messageHandler;
-            _jobContextMapper = new JobContextMapper();
+            _jobContextDtoToMessageMapper = jobContextDtoToMessageMapper;
+            _jobContextMessageMetadataService = jobContextMessageMetadataService;
         }
 
         public void OpenAsync(CancellationToken cancellationToken)
@@ -56,97 +81,59 @@ namespace ESFA.DC.JobContextManager
             await _topicSubscriptionService.UnsubscribeAsync();
         }
 
-        public JobStatusDto BuildJobStatusDto(long jobId, JobStatusType jobStatusType)
-        {
-            return new JobStatusDto(jobId, (int)jobStatusType);
-        }
-
-        public AuditingDto BuildAuditingDto(JobContextMessage jobContextMessage, AuditEventType auditEventType, string extraInfo = null)
-        {
-            return new AuditingDto()
-            {
-                EventType = (int)auditEventType,
-                ExtraInfo = extraInfo,
-                Filename = (string)jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename],
-                JobId = jobContextMessage.JobId,
-                Source = jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName,
-                UkPrn = (string)jobContextMessage.KeyValuePairs[JobContextMessageKey.Username],
-                UserId = (string)jobContextMessage.KeyValuePairs[JobContextMessageKey.Username],
-            };
-        }
-
-        public bool PointerIsFirstTopic(JobContextMessage jobContextMessage)
-        {
-            return jobContextMessage.TopicPointer == 0;
-        }
-
-        public bool PointerIsLastTopic(JobContextMessage jobContextMessage)
-        {
-            return jobContextMessage.TopicPointer == jobContextMessage.Topics.Count - 1;
-        }
-
         private async Task<IQueueCallbackResult> Callback(JobContextDto jobContextDto, IDictionary<string, object> messageProperties, CancellationToken cancellationToken)
         {
-            JobContextMessage jobContextMessage = _jobContextMapper.MapTo(jobContextDto);
-            JobContextMessage jobContextMessageConst = _jobContextMapper.MapTo(jobContextDto);
+            JobContextMessage jobContextMessage = _jobContextDtoToMessageMapper.MapTo(jobContextDto);
 
             try
             {
-                if (PointerIsFirstTopic(jobContextMessageConst))
+                if (_jobContextMessageMetadataService.PointerIsFirstTopic(jobContextMessage))
                 {
-                    await _auditingDtoQueuePublishService.PublishAsync(BuildAuditingDto(jobContextMessageConst, AuditEventType.JobStarted));
+                    await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.JobStarted));
+                    await _jobStatusDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildJobStatusDto(jobContextMessage, JobStatusType.Processing));
                 }
 
-                await _auditingDtoQueuePublishService.PublishAsync(BuildAuditingDto(jobContextMessageConst, AuditEventType.ServiceStarted));
-
-                if (jobContextMessage.TopicPointer == 0)
-                {
-                    await _jobStatusDtoQueuePublishService.PublishAsync(BuildJobStatusDto(jobContextMessage.JobId, JobStatusType.Processing));
-                }
+                await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.ServiceStarted));
 
                 T obj = _mapper.MapTo(jobContextMessage);
 
                 if (!await _messageHandler.HandleAsync(obj, cancellationToken))
                 {
-                    await _auditingDtoQueuePublishService.PublishAsync(BuildAuditingDto(jobContextMessageConst, AuditEventType.JobFailed));
+                    await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.JobFailed));
                     return new QueueCallbackResult(false, null);
                 }
 
                 jobContextMessage = _mapper.MapFrom(obj);
 
-                await _auditingDtoQueuePublishService.PublishAsync(BuildAuditingDto(jobContextMessageConst, AuditEventType.ServiceFinished));
+                await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.ServiceFinished));
 
-                if (PointerIsLastTopic(jobContextMessageConst))
+                if (_jobContextMessageMetadataService.PointerIsLastTopic(jobContextMessage))
                 {
-                    await _auditingDtoQueuePublishService.PublishAsync(BuildAuditingDto(jobContextMessageConst, AuditEventType.JobFinished));
-                }
+                    await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.JobFinished));
 
-                jobContextMessage.TopicPointer++;
-                if (jobContextMessage.TopicPointer >= jobContextMessage.Topics.Count)
-                {
-                    if (jobContextMessage.KeyValuePairs.ContainsKey(JobContextMessageKey.PauseWhenFinished))
+                    if (_jobContextMessageMetadataService.JobShouldPauseWhenFinished(jobContextMessage))
                     {
-                        await _jobStatusDtoQueuePublishService.PublishAsync(BuildJobStatusDto(jobContextMessage.JobId, JobStatusType.Waiting));
+                        await _jobStatusDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildJobStatusDto(jobContextMessage, JobStatusType.Waiting));
                     }
                     else
                     {
-                        await _jobStatusDtoQueuePublishService.PublishAsync(BuildJobStatusDto(jobContextMessage.JobId, JobStatusType.Completed));
+                        await _jobStatusDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildJobStatusDto(jobContextMessage, JobStatusType.Completed));
                     }
-
-                    return new QueueCallbackResult(true, null);
                 }
-
-                // get the next subscription name
-                string nextTopicSubscriptionName = jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName;
-
-                // create properties for topic with sqlfilter
-                var topicProperties = new Dictionary<string, object>
+                else
                 {
-                    { "To", nextTopicSubscriptionName }
-                };
+                    jobContextMessage.TopicPointer++;
 
-                jobContextDto = _jobContextMapper.MapFrom(jobContextMessage);
-                await _topicPublishService.PublishAsync(jobContextDto, topicProperties, nextTopicSubscriptionName);
+                    string nextTopicSubscriptionName = jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName;
+
+                    var nextTopicProperties = new Dictionary<string, object>
+                    {
+                        { "To", nextTopicSubscriptionName }
+                    };
+
+                    var nextTopicJobContextDto = _jobContextDtoToMessageMapper.MapFrom(jobContextMessage);
+                    await _topicPublishService.PublishAsync(nextTopicJobContextDto, nextTopicProperties, nextTopicSubscriptionName);
+                }
 
                 return new QueueCallbackResult(true, null);
             }
@@ -154,110 +141,10 @@ namespace ESFA.DC.JobContextManager
             {
                 _logger.LogError("Exception thrown in JobContextManager callback", ex, new object[] { jobContextDto.JobId });
 
-                await _auditingDtoQueuePublishService.PublishAsync(BuildAuditingDto(jobContextMessageConst, AuditEventType.JobFailed, ex.ToString()));
+                await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.JobFailed, ex.ToString()));
 
                 return new QueueCallbackResult(false, ex);
             }
         }
     }
 }
-
-
-
-//using System;
-//using System.Threading.Tasks;
-//using ESFA.DC.Auditing.Dto;
-//using ESFA.DC.Auditing.Interface;
-//using ESFA.DC.JobContext.Interface;
-//using ESFA.DC.Queueing.Interface;
-
-//namespace ESFA.DC.Auditing
-//{
-//    public sealed class Auditor : IAuditor
-//    {
-//        private readonly IQueuePublishService<AuditingDto> _queuePublishService;
-
-//        public Auditor(IQueuePublishService<AuditingDto> queuePublishService)
-//        {
-//            _queuePublishService = queuePublishService;
-//        }
-
-//        public async Task AuditStartAsync(IJobContextMessage jobContextMessage)
-//        {
-//            if (jobContextMessage.TopicPointer == 0)
-//            {
-//                await AuditAsync(
-//                    jobContextMessage,
-//                    AuditEventType.JobStarted);
-//            }
-
-//            await AuditAsync(
-//                jobContextMessage,
-//                AuditEventType.ServiceStarted);
-//        }
-
-//        public async Task AuditServiceFailAsync(IJobContextMessage jobContextMessage, Exception ex)
-//        {
-//            await AuditAsync(
-//                jobContextMessage,
-//                AuditEventType.ServiceFailed,
-//                ex.ToString());
-//        }
-
-//        public async Task AuditServiceFailAsync(IJobContextMessage jobContextMessage, string message)
-//        {
-//            await AuditAsync(
-//                jobContextMessage,
-//                AuditEventType.ServiceFailed,
-//                message);
-//        }
-
-//        public async Task AuditJobFailAsync(IJobContextMessage jobContextMessage)
-//        {
-//            await AuditAsync(
-//                jobContextMessage,
-//                AuditEventType.JobFailed);
-//        }
-
-//        public async Task AuditEndAsync(IJobContextMessage jobContextMessage)
-//        {
-//            await AuditAsync(
-//                jobContextMessage,
-//                AuditEventType.ServiceFinished);
-
-//            if (jobContextMessage.TopicPointer == jobContextMessage.Topics.Count - 1)
-//            {
-//                await AuditAsync(
-//                    jobContextMessage,
-//                    AuditEventType.JobFinished);
-//            }
-//        }
-
-//        public async Task AuditAsync(
-//            IJobContextMessage jobContextMessage,
-//            AuditEventType eventType,
-//            string extraInfo = null)
-//        {
-//            await AuditAsync(
-//                jobContextMessage.Topics[jobContextMessage.TopicPointer].SubscriptionName,
-//                eventType,
-//                (string)jobContextMessage.KeyValuePairs[JobContextMessageKey.Username],
-//                jobContextMessage.JobId,
-//                (string)jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename],
-//                (string)jobContextMessage.KeyValuePairs[JobContextMessageKey.UkPrn],
-//                extraInfo);
-//        }
-
-//        public async Task AuditAsync(
-//            string source,
-//            AuditEventType eventType,
-//            string userId,
-//            long jobId = -1,
-//            string filename = null,
-//            string ukPrn = null,
-//            string extraInfo = null)
-//        {
-//            await _queuePublishService.PublishAsync(new AuditingDto(source, (int)eventType, userId, jobId, filename, ukPrn, extraInfo));
-//        }
-//    }
-//}

@@ -43,7 +43,7 @@ namespace ESFA.DC.JobContextManager.Tests
                 }
             };
 
-            var mapper = new JobContextMapper();
+            var mapper = new JobContextDtoToMessageMapper();
             var message = mapper.MapTo(jobContextDto);
 
             message.SubmissionDateTimeUtc.Should().Be(now);
@@ -86,7 +86,7 @@ namespace ESFA.DC.JobContextManager.Tests
                 }
             };
 
-            JobContextMapper mapper = new JobContextMapper();
+            JobContextDtoToMessageMapper mapper = new JobContextDtoToMessageMapper();
             JobContextDto dto = mapper.MapFrom(jobContextMessage);
 
             dto.SubmissionDateTimeUtc.Should().Be(now);

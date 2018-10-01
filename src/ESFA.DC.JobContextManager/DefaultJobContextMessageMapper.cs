@@ -3,16 +3,17 @@ using ESFA.DC.Mapping.Interface;
 
 namespace ESFA.DC.JobContextManager
 {
-    public class DefaultJobContextMessageMapper : IMapper<JobContextMessage, JobContextMessage>
+    public class DefaultJobContextMessageMapper<T> : IMapper<JobContextMessage, T>
+        where T : class
     {
-        public JobContextMessage MapTo(JobContextMessage value)
+        public T MapTo(JobContextMessage value)
         {
-            return value;
+            return value as T;
         }
 
-        public JobContextMessage MapFrom(JobContextMessage value)
+        public JobContextMessage MapFrom(T value)
         {
-            return value;
+            return value as JobContextMessage;
         }
     }
 }
