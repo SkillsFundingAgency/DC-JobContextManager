@@ -72,7 +72,12 @@
         /// </summary>
         public const string FundingAlbOutput = "FundingAlbOutput";
 
-         /// <summary>
+        /// <summary>
+        /// The *Key* of the serialised and persisted funding FM70 output. (string)
+        /// </summary>
+        public const string FundingFm70Output = "FundingFm70Output";
+
+        /// <summary>
         /// The *Key* of the serialised and persisted funding FM36 output. (string)
         /// </summary>
         public const string FundingFm36Output = "FundingFm36Output";
