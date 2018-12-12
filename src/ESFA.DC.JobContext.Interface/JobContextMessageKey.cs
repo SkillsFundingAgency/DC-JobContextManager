@@ -18,6 +18,11 @@
         public const string Filename = "Filename";
 
         /// <summary>
+        /// The original name of the file to process (before being transformed to tight schema). (string)
+        /// </summary>
+        public const string OriginalFilename = "OriginalFilename";
+
+        /// <summary>
         /// The size of the file in bytes. (long)
         /// </summary>
         public const string FileSizeInBytes = "FileSizeInBytes";
@@ -101,5 +106,20 @@
         /// Flag to determine if the job will be finished (marked as completed) or go to Awaiting Action status (bool)
         /// </summary>
         public const string PauseWhenFinished = "PauseWhenFinished";
+
+        /// <summary>
+        /// The return period. (int)
+        /// </summary>
+        public const string ReturnPeriod = "ReturnPeriod";
+
+        /// <summary>
+        /// The collection name. (string)
+        /// </summary>
+        public const string CollectionName = "CollectionName";
+
+        /// <summary>
+        /// The collection year. (int)
+        /// </summary>
+        public const string CollectionYear = "CollectionYear";
     }
 }
