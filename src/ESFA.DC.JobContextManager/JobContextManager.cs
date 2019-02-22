@@ -139,7 +139,7 @@ namespace ESFA.DC.JobContextManager
             }
             catch (Exception ex)
             {
-                _logger.LogError("Exception thrown in JobContextManager callback", ex, new object[] { jobContextDto.JobId });
+                _logger.LogError("Exception thrown in JobContextManager callback", ex, jobIdOverride: jobContextDto.JobId);
 
                 await _auditingDtoQueuePublishService.PublishAsync(_jobContextMessageMetadataService.BuildAuditingDto(jobContextMessage, AuditEventType.JobFailed, ex.ToString()));
 
