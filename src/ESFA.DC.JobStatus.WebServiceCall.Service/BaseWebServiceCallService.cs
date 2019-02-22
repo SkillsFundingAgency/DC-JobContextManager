@@ -32,6 +32,7 @@ namespace ESFA.DC.JobStatus.WebServiceCall.Service
 
         protected async Task SendStatusAsync(long jobId, int status, CancellationToken cancellationToken)
         {
+            _logger.LogInfo($"Attempting to call webservice update status method to set jobid: {jobId} status to: {status}", jobIdOverride: jobId);
             await client.PostAsync(
                 _endPointUrl,
                 new StringContent(_serializationService.Serialize(new JobStatusDto(jobId, status)), Encoding.UTF8, "application/json"),

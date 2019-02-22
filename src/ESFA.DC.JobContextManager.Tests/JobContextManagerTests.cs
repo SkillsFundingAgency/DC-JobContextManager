@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Auditing.Interface;
-using ESFA.DC.JobContext;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
@@ -14,7 +10,6 @@ using ESFA.DC.JobStatus.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing.Interface;
-using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -30,7 +25,7 @@ namespace ESFA.DC.JobContextManager.Tests
             var loggerMock = new Mock<ILogger>();
             var topicSubscriptionServiceMock = new Mock<ITopicSubscriptionService<JobContextDto>>();
 
-            loggerMock.Setup(l => l.LogInfo("Opening Job Context Manager method invoked, Topic Subscription Subscribing", It.IsAny<object[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Verifiable();
+            loggerMock.Setup(l => l.LogInfo("Opening Job Context Manager method invoked, Topic Subscription Subscribing", It.IsAny<object[]>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Verifiable();
             topicSubscriptionServiceMock.Setup(s => s.Subscribe(It.IsAny<Func<JobContextDto, IDictionary<string, object>, CancellationToken, Task<IQueueCallbackResult>>>(), cancellationToken)).Verifiable();
 
             NewManager<string>(topicSubscriptionService: topicSubscriptionServiceMock.Object, logger: loggerMock.Object).OpenAsync(cancellationToken);
@@ -47,7 +42,7 @@ namespace ESFA.DC.JobContextManager.Tests
             var loggerMock = new Mock<ILogger>();
             var topicSubscriptionServiceMock = new Mock<ITopicSubscriptionService<JobContextDto>>();
 
-            loggerMock.Setup(l => l.LogInfo("Closing Job Context Manager method invoked, Topic Subscription Unsubscribing", It.IsAny<object[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Verifiable();
+            loggerMock.Setup(l => l.LogInfo("Closing Job Context Manager method invoked, Topic Subscription Unsubscribing", It.IsAny<object[]>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Verifiable();
             topicSubscriptionServiceMock.Setup(s => s.UnsubscribeAsync()).Returns(Task.CompletedTask).Verifiable();
 
 

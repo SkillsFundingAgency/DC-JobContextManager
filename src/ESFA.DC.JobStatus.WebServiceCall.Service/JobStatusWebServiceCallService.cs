@@ -38,7 +38,7 @@ namespace ESFA.DC.JobStatus.WebServiceCall.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to post job status message", ex);
+                _logger.LogError("Failed to post job status message", ex, jobIdOverride: jobStatusDto.JobId);
                 return new QueueCallbackResult(false, ex);
             }
         }

@@ -58,7 +58,7 @@ namespace ESFA.DC.JobStatus.WebServiceCall.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to post dead letter job status message", ex);
+                _logger.LogError("Failed to post dead letter job status message", ex, jobIdOverride: jobContextDto.JobId);
                 return new QueueCallbackResult(false, ex);
             }
         }
