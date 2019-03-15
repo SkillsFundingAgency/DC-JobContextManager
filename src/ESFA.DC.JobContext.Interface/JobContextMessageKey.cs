@@ -108,16 +108,6 @@
         public const string PauseWhenFinished = "PauseWhenFinished";
 
         /// <summary>
-        /// The NCS TouchpointId. (string)
-        /// </summary>
-        public const string TouchpointId = "TouchpointId";
-
-        /// <summary>
-        /// The external timestamp. (DateTime)
-        /// </summary>
-        public const string ExternalTimestamp = "ExternalTimestamp";
-
-        /// <summary>
         /// The return period. (int)
         /// </summary>
         public const string ReturnPeriod = "ReturnPeriod";
