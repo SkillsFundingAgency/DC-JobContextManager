@@ -121,5 +121,10 @@
         /// The collection year. (int)
         /// </summary>
         public const string CollectionYear = "CollectionYear";
+
+        /// <summary>
+        /// The *Key* of the serialised and persisted ILR Reference Data. (string)
+        /// </summary>
+        public const string IlrReferenceData = "IlrReferenceData";
     }
 }
